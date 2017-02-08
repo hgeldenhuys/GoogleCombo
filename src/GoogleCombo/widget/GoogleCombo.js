@@ -159,6 +159,19 @@ define([
                         setTimeout(this._googleVisualization,250);
                     }
                     });
+                } else {
+                    if (typeof google !== 'undefined') {
+                        window._googleVisualization = true;
+                        google.charts.load('current',{'packages' : ['corechart']});
+                        google.charts.setOnLoadCallback(lang.hitch(this, function() {this._createTable(callback);}));
+                    } else {
+                        var duration =  new Date().getTime() - this._startTime;
+                        if (duration > 5000) {
+                            console.warn('Timeout loading Google API.');
+                            return;
+                        }
+                        setTimeout(this._googleVisualization,250);
+                    }
                 }
                 this._startTime = new Date().getTime();
                 setTimeout(this._googleVisualization,100);
@@ -201,6 +214,13 @@ define([
                 this._handles = [ objectHandle, validationHandle ];
             }
         },
+
+        uninitialize: function(o) {
+            console.log("Uninitialize " + o);
+            this._unsubscribe();
+            dojo.empty(this.domNode);
+            this.googleComboNode = this.domNode;
+        }
     });
 });
 
